@@ -11,7 +11,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:
     Messanger.Models
---  Mappend.Policy
+    Messanger.Policy
   
   build-depends:
     base,
