@@ -25,11 +25,12 @@ instance DCRecord Message where
     from <- lookup "from" doc
     to <- lookup "to" doc
     mTime <- lookup "time" doc
+    time <- maybeRead mTime
     return Message { messageId = pid
                    , messageBody = body
                    , messageFrom = from
                    , messageTo = to
-                   , messageTime = mTime }
+                   , messageTime = time }
 
   toDocument message = 
     let mpid = messageId message
@@ -43,3 +44,9 @@ instance DCRecord Message where
         , "time" =: messageTime message ]
 
   collectionName _ = "messages"
+
+
+-- Util function
+maybeRead :: (Monad m, Read a) => String -> m a
+maybeRead s = let x = fmap fst . listToMaybe . reads $ s
+              in maybe (fail "Cannot read") return x

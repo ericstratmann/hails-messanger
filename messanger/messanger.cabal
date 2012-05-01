@@ -1,0 +1,19 @@
+name:                messanger
+version:             0.1.0.0
+author:              Eric Stratmann
+maintainer:          estrat@cs.stanford.edu
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.8
+
+library
+  exposed-modules:
+    Messanger.Server
+  other-modules:
+  build-depends:
+    base,
+    hails >= 0.1 && < 1.0,
+    iterio-server == 0.3,
+    messanger-policy == 0.1.0.0,
+    blaze-html,
+    bytestring

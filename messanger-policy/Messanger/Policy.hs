@@ -30,7 +30,7 @@ messagesCollection p = collectionP p "messages" lpub colClearance $
     where colClearance = newDC (priv p) (<>)
           labelForMessage message = 
             let r = messageTo message .\/. messageFrom message .\/. priv p
-            in newDC (r) ((messageTo message) .\/. priv p)
+            in newDC r r
 
 -- | Policy handler
 messangerDB :: DC MessangerPolicy
