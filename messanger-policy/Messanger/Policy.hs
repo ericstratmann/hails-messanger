@@ -4,6 +4,7 @@ module Messanger.Policy where
 import Data.Maybe
 import Hails.Policy
 import Messanger.Models
+import LIO.Data.Time
 
 -- | Internal messanger policy. The type constructor should not be
 -- exported to avoid leaking the privilege.
@@ -50,3 +51,13 @@ userCollection p = collectionP p "users" lpub colClearance $
 -- | Policy handler
 messangerDB :: DC MessangerPolicy
 messangerDB = mkPolicy
+
+fooToLabeled ldoc act = do
+  (MessangerPolicy privs _) <- messangerDB
+  gateToLabeled privs ldoc act
+
+addDate :: DCLabeled (Document DCLabel) -> DC (DCLabeled (Document DCLabel))
+addDate ldoc = do
+  date <- getCurrentTime
+  fooToLabeled ldoc $ \partial ->
+    return $ ["time" =: show date] ++ partial

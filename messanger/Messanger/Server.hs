@@ -10,7 +10,7 @@ import Hails.Database.MongoDB hiding (reverse)
 import Hails.Database.MongoDB.Structured
 import Messanger.Views
 import Messanger.Policy
---import LIO.TCB
+import LIO.TCB
 
 server :: AppReqHandler
 server = runAction $ runActionRoute $ mconcat [
@@ -29,11 +29,12 @@ instance RestController t (DCLabeled L8.ByteString) DC MessagesController where
     req  <- getHttpReq
     body <- getBody
     ldoc <- liftLIO $ labeledDocI req body
---    liftLIO $ do
---      doc <- unlabel ldoc
---      ioTCB $ Prelude.putStrLn $ show doc
+    newLdoc <- liftLIO $ addDate ldoc 
+    liftLIO $ do
+      doc <- unlabel newLdoc
+      ioTCB $ Prelude.putStrLn $ show doc
     liftLIO $ withDB policy $ do
-      insert "messages" ldoc
+      insert "messages" newLdoc
     redirectTo "/messages"
   
   restShow _ pid = do
@@ -48,7 +49,9 @@ instance RestController t (DCLabeled L8.ByteString) DC MessagesController where
    messages <- liftLIO $ findAll policy $ select [] "messages"
    respondHtml $ indexMessages messages
 
-
+debug str = 
+    liftLIO $ do
+      ioTCB $ Prelude.putStrLn $ str
 
 -- Hm, thought this function was supposed to be in the source version of hails. Copied from blog tutorial - Eric
 -- | Find all records that satisfy the query and can be read subject

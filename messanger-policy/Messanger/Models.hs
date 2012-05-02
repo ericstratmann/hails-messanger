@@ -6,7 +6,6 @@ import Prelude hiding (lookup)
 import Data.Maybe
 import Hails.Database.MongoDB
 import Hails.Database.MongoDB.Structured
-import LIO.Data.Time
 
 type Username = String
 
@@ -33,7 +32,7 @@ data Message = Message
   , messageBody       :: String
   , messageFrom       :: Username
   , messageTo         :: Username
-  , messageTime       :: Int
+  , messageTime       :: String
   } deriving Show
 
 instance DCRecord Message where
@@ -42,8 +41,7 @@ instance DCRecord Message where
     body <- lookup "body" doc
     from <- lookup "from" doc
     to <- lookup "to" doc
-    mTime <- lookup "time" doc
-    time <- maybeRead mTime
+    time <- lookup "time" doc
     return Message { messageId = pid
                    , messageBody = body
                    , messageFrom = from

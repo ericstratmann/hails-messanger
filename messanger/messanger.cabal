@@ -16,4 +16,5 @@ library
     iterio-server == 0.3,
     messanger-policy == 0.1.0.0,
     blaze-html,
-    bytestring
+    bytestring,
+    lio

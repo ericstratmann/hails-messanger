@@ -30,7 +30,6 @@ newMessage currentUser = do
   h1 $ "Send a private message"
   form ! action "/messages" ! method "POST" $ do
     input ! type_ "hidden" ! name "from" ! value (toValue currentUser)
-    input ! type_ "hidden" ! name "time" ! value "1234567890"
     div $ do
       label ! for "to" $ "To:"
       input ! type_ "text" ! name "to" ! id "to"
