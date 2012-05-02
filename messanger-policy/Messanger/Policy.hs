@@ -13,8 +13,12 @@ data MessangerPolicy = MessangerPolicy TCBPriv (Database DCLabel)
 instance DatabasePolicy MessangerPolicy where
   createDatabasePolicy conf p = do
     messageColl <- messagesCollection p
-    db <- labelDatabase conf collectionsLabel lpub
+    userColl <- messagesCollection p
+    db <- do
+        labelDatabase conf collectionsLabel lpub
           >>= assocCollectionP p messageColl
+        labelDatabase conf collectionsLabel lpub
+          >>= assocCollectionP p userColl
     return $ MessangerPolicy p db
     where collectionsLabel = newDC (<>) (priv p)
 
@@ -31,6 +35,17 @@ messagesCollection p = collectionP p "messages" lpub colClearance $
           labelForMessage message = 
             let r = messageTo message .\/. messageFrom message .\/. priv p
             in newDC r r
+
+userCollection :: TCBPriv -> DC (Collection DCLabel)
+userCollection p = collectionP p "users" lpub colClearance $
+  RawPolicy (labelForUser . fromJust . fromDocument)
+            [ ("_id",   SearchableField)
+            ]
+    where colClearance = newDC (priv p) (<>)
+          labelForUser user = 
+            let r = userId user .\/. priv p
+            in newDC r r
+
 
 -- | Policy handler
 messangerDB :: DC MessangerPolicy

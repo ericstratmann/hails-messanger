@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Messanger.Models ( Message(..), DCRecord(..), Username) where
+module Messanger.Models ( User(..), Message(..), DCRecord(..), Username) where
 
 import Prelude hiding (lookup)
 
@@ -9,6 +9,24 @@ import Hails.Database.MongoDB.Structured
 import LIO.Data.Time
 
 type Username = String
+
+data User = User
+  { userId :: Username
+  , userBlacklist :: [Username]
+  } deriving Show
+
+instance DCRecord User where
+  fromDocument doc = do
+    pid <- lookup "_id" doc
+    blacklist <- lookup "blacklist" doc
+    return User { userId = pid
+                , userBlacklist = blacklist }
+
+  toDocument user = 
+        [ "_id" =: userId user
+        , "blacklist" =: userBlacklist user ]
+
+  collectionName _ = "users"
 
 data Message = Message
   { messageId         :: Maybe ObjectId
