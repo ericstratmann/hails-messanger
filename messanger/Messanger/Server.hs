@@ -10,7 +10,7 @@ import Hails.Database.MongoDB hiding (reverse)
 import Hails.Database.MongoDB.Structured
 import Messanger.Views
 import Messanger.Policy
-import LIO.TCB
+--import LIO.TCB
 
 server :: AppReqHandler
 server = runAction $ runActionRoute $ mconcat [
@@ -29,10 +29,9 @@ instance RestController t (DCLabeled L8.ByteString) DC MessagesController where
     req  <- getHttpReq
     body <- getBody
     ldoc <- liftLIO $ labeledDocI req body
-    liftLIO $ do
-      doc <- unlabel ldoc
-      ioTCB $ Prelude.putStrLn $ show doc
-    
+--    liftLIO $ do
+--      doc <- unlabel ldoc
+--      ioTCB $ Prelude.putStrLn $ show doc
     liftLIO $ withDB policy $ do
       insert "messages" ldoc
     redirectTo "/messages"
